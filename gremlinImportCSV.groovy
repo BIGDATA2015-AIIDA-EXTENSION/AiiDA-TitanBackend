@@ -37,7 +37,43 @@ new File(csvDir + "nodes.csv").each({ line ->
 // Parse db_dbattribute entries stored in attribute.csv, creates an attribute vertex identified by id
 // and add it to TitanGraph. Switch case ensure the correct type for the value
 // TODO: Take into account datatype of type 'list' or 'dict'
+new File(csvDir + "attributes.csv").each({ line ->
+    (id, key, datatype, tval, fval, ival, bval, dval, node_id) = line.split(",")
+    node = bg.addVertex("attribute::" + id)
 
+    switch (datatype) {
+        case 'tval':
+            ElementHelper.setProperties(node, ["key":key.toString(),
+                                               "value":tval.toString()
+            ])
+            break
+        case 'fval':
+            ElementHelper.setProperties(node, ["key":key.toString(),
+                                               "value":fval.toFloat()
+            ])
+            break
+        case 'ival':
+            ElementHelper.setProperties(node, ["key":key.toString(),
+                                               "value":ival.toInteger()
+            ])
+            break
+        case 'bval':
+            ElementHelper.setProperties(node, ["key":key.toString(),
+                                               "value":bval.toBoolean()
+            ])
+            break
+        case 'dval':
+            ElementHelper.setProperties(node, ["key":key.toString(),
+                                               "value":Date.parse("yyyy-MM-dd H:m:s", dval)
+            ])
+            break
+        default:
+            ElementHelper.setProperties(node, ["key":key.toString(),
+                                               "value":null
+            ])
+            break
+    }
+})
 
 
 // Parse db_dbextra entries stored in extras.csv, creates an extra vertex identified by id and add it to TitanGraph.

@@ -1,0 +1,7 @@
+1, supercooluuid, data.structure.StructureData.,node1Data,something pretty,2015-05-08 00:54:46.494892, 2015-05-09 00:54:46.494892,1,1,1,true
+2, supercooluuid2, calculation.job.quantumespresso.pw.PwCalculation.,node2Calc,something even more pretty,2015-05-08 00:54:46.494892, 2015-05-09 00:54:46.494892,1,1,1,true
+3, supercooluuid2, calculation.job.quantumespresso.pw.PwCalculation.,node3Calc,something even more pretty,2015-05-08 00:54:46.494892, 2015-05-09 00:54:46.494892,2,1,1,true
+4, supercooluuid2, data.structure.StructureData.,node4Data,Ice,2015-05-08 00:54:46.494892, 2015-05-09 00:54:46.494892,2,1,1,true
+5, supercooluuid2, data.structure.StructureData.,node5Data,Fire,2015-05-08 00:54:46.494892, 2015-05-09 00:54:46.494892,2,1,1,true
+6, supercooluuid2, data.structure.StructureData.,node6Data,Water,2015-05-08 00:54:46.494892, 2015-05-09 00:54:46.494892,2,1,1,true
+7, supercooluuid2, data.structure.StructureData.,node7Data,Earth,2015-05-08 00:54:46.494892, 2015-05-09 00:54:46.494892,2,1,1,true
