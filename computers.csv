@@ -1,2 +1,0 @@
-1,3731dc21-ac44-49be-8379-5cd3cf72fa6b,Dora,dora.cscs.ch,Dora CSCS Cluster,true,ssh,slurm,{},{"append_text": "", "mpirun_command": ["aprun", "-n", "{tot_num_mpiprocs}"], "workdir": "/scratch/daint/{username}/aiida_run/", "prepend_text": "", "default_mpiprocs_per_machine": 24}
-2,48d499d7-d1e2-4b7b-95f9-afc32c048e9b,Daint,daint.cscs.ch,Daint CSCS Cluster,true,ssh,slurm,{},{"default_mpiprocs_per_machine": 8, "workdir": "/scratch/daint/{username}/aiida_run/", "append_text": "", "prepend_text": "\n", "mpirun_command": ["aprun", "-n", "{tot_num_mpiprocs}"]}
