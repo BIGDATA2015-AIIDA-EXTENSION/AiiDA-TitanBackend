@@ -48,29 +48,22 @@ println 'importing attributes...'
 new File(csvDir + "/attributes.csv").each({ line ->
     (id, key, datatype, tval, fval, ival, bval, dval, node_id) = line.split(";")
 
-    attributes = [:]
+    node = bg.getVertex("node::" + node_id)
+    attributes = ElementHelper.getProperties(node)
 
     if (id)
-        node = bg.addVertex("attribute::" + id)
-        attributes.put("key", key.toString())
-
         if (datatype == "float")
-            attributes.put("value", fval.toFloat())
+            attributes.put(key.toString(), fval.toFloat())
         else if (datatype == "int")
-            attributes.put("value", ival.toInteger())
+            attributes.put(key.toString(), ival.toInteger())
         else if (datatype == "bool")
-            attributes.put("value", bval.toBoolean())
+            attributes.put(key.toString(), bval.toBoolean())
         else if (datatype == "date")
-            attributes.put("value", Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
+            attributes.put(key.toString(), Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
         else if (datatype == "txt")
-            attributes.put("value", tval.toString())
-        else if (datatype == "list")
-            attributes.put("value", "list")
-        else if (datatype == "dict")
-            attributes.put("value", "dict")
+            attributes.put(key.toString(), tval.toString())
 
-        attributes.put("node_type", "attribute")
-        ElementHelper.setProperties(node, attributes)
+    ElementHelper.setProperties(node, attributes)
 
 })
 
@@ -82,29 +75,22 @@ println 'importing extras...'
 new File(csvDir + "/extras.csv").each({ line ->
     (id, key, datatype, tval, fval, ival, bval, dval, node_id) = line.split(";")
 
-    attributes = [:]
+    node = bg.getVertex("node::" + node_id)
+    attributes = ElementHelper.getProperties(node)
 
     if (id)
-        node = bg.addVertex("extra::" + id)
-        attributes.put("key", key.toString())
-
         if (datatype == "float")
-            attributes.put("value", fval.toFloat())
+            attributes.put(key.toString(), fval.toFloat())
         else if (datatype == "int")
-            attributes.put("value", ival.toInteger())
+            attributes.put(key.toString(), ival.toInteger())
         else if (datatype == "bool")
-            attributes.put("value", bval.toBoolean())
+            attributes.put(key.toString(), bval.toBoolean())
         else if (datatype == "date")
-            attributes.put("value", Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
+            attributes.put(key.toString(), Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
         else if (datatype == "txt")
-            attributes.put("value", tval.toString())
-        else if (datatype == "list")
-            attributes.put("value", "list")
-        else if (datatype == "dict")
-            attributes.put("value", "dict")
+            attributes.put(key.toString(), tval.toString())
 
-        attributes.put("node_type", "extra")
-        ElementHelper.setProperties(node, attributes)
+    ElementHelper.setProperties(node, attributes)
 })
 
 println 'importing calcstates...'
@@ -281,32 +267,6 @@ new File(csvDir + "/nodes.csv").each({ line ->
 
 })
 
-println 'linking nodes to attributes...'
-
-// Create edges between node vertices and attribute vertices extracted from attributes.csv
-// Edge labels represent the fact that a node has a given attribute
-new File(csvDir + "/attributes.csv").each({ line ->
-    (id, key, datatype, tval, fval, ival, bval, dval, node_id) = line.split(";")
-
-    node = bg.getVertex("node::" + node_id)
-    attribute = bg.getVertex("attribute::" + id)
-
-    bg.addEdge(null, node, attribute, 'withAttr')
-})
-
-println 'linking nodes to extras...'
-
-// Create edges between node vertices and extra vertices extracted from extras.csv
-// Edge labels represent the fact that a node has a given extra attribute
-new File(csvDir + "/extras.csv").each({ line ->
-    (id, key, datatype, tval, fval, ival, bval, dval, node_id) = line.split(";")
-
-    node = bg.getVertex("node::" + node_id)
-    extra = bg.getVertex("extra::" + id)
-
-    bg.addEdge(null, node, extra, 'withExtraAttr')
-})
-
 println 'linking nodes to calcstates...'
 
 // Create edges between node vertices and calcState vertices extracted from calcstates.csv
@@ -333,6 +293,11 @@ new File(csvDir + "/comments.csv").each({ line ->
     bg.addEdge(null, node, comment, 'withComment')
 
 })
+
+//TODO link nodes to group
+//new File(csvDir + "/nodegroups.csv").each({ line ->
+//    (id, uuid, node_id, ctime, mtime, user_id, content) = line.split(";")
+//})
 
 bg.commit()
 
