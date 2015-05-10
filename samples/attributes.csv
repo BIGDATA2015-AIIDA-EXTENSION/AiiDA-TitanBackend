@@ -1,7 +1,7 @@
-1;Energy;float;;50.0;;;;1
-2;Energy;float;;-50.0;;;;4
-3;Energy;float;;20.0;;;;5
-4;Energy;float;;-150.0;;;;7
+1;energy;float;;50.0;;;;1
+2;energy;float;;-50.0;;;;4
+3;energy;float;;20.0;;;;5
+4;energy;float;;-150.0;;;;7
 5;number_of_atoms;int;;null;2;null;null;1
 6;number_of_atoms;int;;null;2;null;null;4
 7;number_of_atoms;int;;null;2;null;null;5
@@ -14,6 +14,7 @@
 14;element;txt;O;null;null;null;null;8
 15;element;txt;O;null;null;null;null;15
 16;element;txt;Fe;null;null;null;null;16
-17;Energy;float;;150.0;;;;10
-18;Energy;float;;50.0;;;;14
-19;Energy;float;;-50.0;;;;13
+17;energy;float;;150.0;;;;10
+18;energy;float;;50.0;;;;14
+19;energy;float;;-50.0;;;;13
+20;element;txt;O;null;null;null;null;5
