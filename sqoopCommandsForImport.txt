@@ -1,0 +1,31 @@
+
+//Import db_dbnode table from aiidadb (postgresql) to HDFS in csv format
+sqoop import --connect jdbc:postgresql://localhost/aiidadb --table db_dbnode --username aiida -P
+
+//Import db_dbattribute table from aiidadb (postgresql) to HDFS
+sqoop import --connect jdbc:postgresql://localhost/aiidadb --table db_dbattribute --username aiida -P
+
+//Import db_dbcalcstate table from aiidadb (postgresql) to HDFS
+sqoop import --connect jdbc:postgresql://localhost/aiidadb --table db_dbcalcstate --username aiida -P
+
+//Import db_dbcomment table from aiidadb (postgresql) to HDFS
+sqoop import --connect jdbc:postgresql://localhost/aiidadb --table db_dbcomment --username aiida -P
+
+//Import db_dbcomputer table from aiidadb (postgresql) to HDFS
+sqoop import --connect jdbc:postgresql://localhost/aiidadb --table db_dbcomputer --username aiida -P
+
+//Import db_dbextra table from aiidadb (postgresql) to HDFS
+sqoop import --connect jdbc:postgresql://localhost/aiidadb --table db_dbextra --username aiida -P
+
+//Import db_dbgroup table from aiidadb (postgresql) to HDFS
+sqoop import --connect jdbc:postgresql://localhost/aiidadb --table db_dbgroup --username aiida -P
+
+//Import db_dblink table from aiidadb (postgresql) to HDFS
+sqoop import --connect jdbc:postgresql://localhost/aiidadb --table db_dblink --username aiida -P
+
+//Import db_dbuser table from aiidadb (postgresql) to HDFS
+sqoop import --connect jdbc:postgresql://localhost/aiidadb --table db_dbuser --username aiida -P
+
+//Import links between computers and nodes from the aiidadb (postgresql) to HDFS in csv format
+sqoop import --connect jdbc:postgresql://localhost/aiidadb --query 'SELECT dbcomputer_id, id FROM db_dbnode WHERE dbcomputer_id IS NOT NULL AND $CONDITIONS' --split-by db_dbnode.id --username aiida -P --target-dir ComputerToNode
+
