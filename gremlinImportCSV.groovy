@@ -1,5 +1,5 @@
 // Adapt to the directory where your csv files lie
-csvDir = "/Users/drissielkamili/Desktop/Cours/Big_Data/Project/aiida_titan_git/Titan/postgres_export"
+csvDir = "/home/souleimane/Cours/Big_Data/aiida_project/titan_git/Titan/postgres_export"
 
 println 'loading graph from hbase...'
 
@@ -16,77 +16,78 @@ new File(csvDir + "/nodes.csv").each({ line ->
 
     attributes = [:]
 
-    if (id)
-        node = bg.addVertex("node::" + id)
-        if (uuid && uuid != "null")
-            attributes.put("uuid", uuid.toString())
-        if (type && type != "null")
-            attributes.put("type", type.toString())
-        if (node_label && node_label != "null")
-            attributes.put("node_label", node_label.toString())
-        if (description && description != "null")
-            attributes.put("description", description.toString())
-        if (ctime && ctime != "null")
-            attributes.put("ctime", Date.parse("yyyy-MM-dd H:m:s", ctime.toString()))
-        if (mtime && mtime != "null")
-            attributes.put("mtime", Date.parse("yyyy-MM-dd H:m:s", mtime.toString()))
-        if (node_version && node_version != "null")
-            attributes.put("node_version", node_version.toInteger())
-        if (is_public && is_public !="null")
-            attributes.put("public", is_public.toBoolean())
+    node = bg.addVertex("node::" + id)
 
-        attributes.put("node_type", "node")
-        ElementHelper.setProperties(node, attributes)
+    if (uuid && uuid != "null")
+        attributes.put("uuid", uuid.toString())
+    if (type && type != "null")
+        attributes.put("type", type.toString())
+    if (node_label && node_label != "null")
+        attributes.put("node_label", node_label.toString())
+    if (description && description != "null")
+        attributes.put("description", description.toString())
+    if (ctime && ctime != "null")
+        attributes.put("ctime", Date.parse("yyyy-MM-dd H:m:s", ctime.toString()))
+    if (mtime && mtime != "null")
+        attributes.put("mtime", Date.parse("yyyy-MM-dd H:m:s", mtime.toString()))
+    if (node_version && node_version != "null")
+        attributes.put("node_version", node_version.toInteger())
+    if (is_public && is_public !="null")
+        attributes.put("public", is_public.toBoolean())
+
+    attributes.put("node_type", "node")
+    ElementHelper.setProperties(node, attributes)
+
+
 
 })
 
 println 'importing attributes...'
-tmp_attr = [:]
-tmp_id = -1
+def tmp_attr = [:]
+def tmp_id = -1
 // Parse db_dbattribute entries stored in attribute.csv, creates an attribute vertex identified by id
 // and add it to TitanGraph. Switch case ensure the correct type for the value
 // TODO: Take into account datatype of type 'list' or 'dict' take into account tval
 new File(csvDir + "/attributes.csv").each({ line ->
-    println line
     (id, key, datatype, tval, fval, ival, bval, dval, node_id) = line.split(";")
 
-    if (tmp_id == -1 )
-        tmp_id = id.toInteger()
-
-    if (tmp_id == id.toInteger())
-        if (datatype == "float")
-            tmp_attr.put(key.toString(), fval.toFloat())
-        else if (datatype == "int")
-            tmp_attr.put(key.toString(), ival.toInteger())
-        else if (datatype == "bool")
-            tmp_attr.put(key.toString(), bval.toBoolean())
-        else if (datatype == "date")
-            tmp_attr.put(key.toString(), Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
-        else if (datatype == "txt")
-            tmp_attr.put(key.toString(), tval.toString())
-
-
-    if (tmp_id != id.toInteger()) {
-        node = bg.getVertex("node::" + tmp_id)
-        attr = ElementHelper.getProperties(node)
-        ElementHelper.setProperties(node, attr + tmp_attr)
-        tmp_id = id.toInteger()
-        tmp_attr = [:]
-
-        if (datatype == "float")
-            tmp_attr.put(key.toString(), fval.toFloat())
-        else if (datatype == "int")
-            tmp_attr.put(key.toString(), ival.toInteger())
-        else if (datatype == "bool")
-            tmp_attr.put(key.toString(), bval.toBoolean())
-        else if (datatype == "date")
-            tmp_attr.put(key.toString(), Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
-        else if (datatype == "txt")
-            tmp_attr.put(key.toString(), tval.toString())
-
+    if (tmp_id.toInteger() == -1 ) {
+        tmp_id = node_id.toInteger()
     }
 
+    if (tmp_id.toInteger() != node_id.toInteger()) {
+        node = bg.getVertex("node::" + tmp_id)
+        attr = ElementHelper.getProperties(node)
+        new_attr = attr + tmp_attr
+        ElementHelper.setProperties(node, new_attr)
+        tmp_id = node_id.toInteger()
+        tmp_attr = [:]
+    }
+
+    if (datatype == "float")
+        tmp_attr.put(key.toString(), fval.toFloat())
+    else if (datatype == "int")
+        tmp_attr.put(key.toString(), ival.toInteger())
+    else if (datatype == "bool")
+        tmp_attr.put(key.toString(), bval.toBoolean())
+    else if (datatype == "date")
+        tmp_attr.put(key.toString(), Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
+    else if (datatype == "txt")
+        tmp_attr.put(key.toString(), tval.toString())
+
+
 })
+
+//When the last line has been read set new properties for the last node
+if (tmp_id.toInteger() != -1) {
+    node = bg.getVertex("node::" + tmp_id)
+    attr = ElementHelper.getProperties(node)
+    new_attr = attr + tmp_attr
+    ElementHelper.setProperties(node, new_attr)
+    tmp_id = -1
+    tmp_attr = [:]
+}
+
 
 println 'importing extras...'
 
@@ -96,23 +97,39 @@ println 'importing extras...'
 new File(csvDir + "/extras.csv").each({ line ->
     (id, key, datatype, tval, fval, ival, bval, dval, node_id) = line.split(";")
 
-    node = bg.getVertex("node::" + node_id)
-    attributes = ElementHelper.getProperties(node)
+    if (tmp_id.toInteger() == -1 ) {
+        tmp_id = node_id.toInteger()
+    }
 
-    if (id)
-        if (datatype == "float")
-            attributes.put(key.toString(), fval.toFloat())
-        else if (datatype == "int")
-            attributes.put(key.toString(), ival.toInteger())
-        else if (datatype == "bool")
-            attributes.put(key.toString(), bval.toBoolean())
-        else if (datatype == "date")
-            attributes.put(key.toString(), Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
-        else if (datatype == "txt")
-            attributes.put(key.toString(), tval.toString())
+    if (tmp_id.toInteger() != node_id.toInteger()) {
+        node = bg.getVertex("node::" + tmp_id)
+        attr = ElementHelper.getProperties(node)
+        new_attr = attr + tmp_attr
+        ElementHelper.setProperties(node, new_attr)
+        tmp_id = node_id.toInteger()
+        tmp_attr = [:]
+    }
 
-    ElementHelper.setProperties(node, attributes)
+    if (datatype == "float")
+        tmp_attr.put(key.toString(), fval.toFloat())
+    else if (datatype == "int")
+        tmp_attr.put(key.toString(), ival.toInteger())
+    else if (datatype == "bool")
+        tmp_attr.put(key.toString(), bval.toBoolean())
+    else if (datatype == "date")
+        tmp_attr.put(key.toString(), Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
+    else if (datatype == "txt")
+        tmp_attr.put(key.toString(), tval.toString())
 })
+
+if (tmp_id.toInteger() != -1) {
+    node = bg.getVertex("node::" + tmp_id)
+    attr = ElementHelper.getProperties(node)
+    new_attr = attr + tmp_attr
+    ElementHelper.setProperties(node, new_attr)
+    tmp_id = -1
+    tmp_attr = [:]
+}
 
 println 'importing calcstates...'
 
@@ -123,16 +140,15 @@ new File(csvDir + "/calcstates.csv").each({ line ->
 
     attributes = [:]
 
-    if (id)
-        node = bg.addVertex("calcstate::" + id)
+    node = bg.addVertex("calcstate::" + id)
 
-        if (state && state != "null")
-            attributes.put("state", id.toInteger())
-        if (time && time != "null")
-            attributes.put("time", Date.parse("yyyy-MM-dd H:m:s", time.toString()))
+    if (state && state != "null")
+        attributes.put("state", id.toInteger())
+    if (time && time != "null")
+        attributes.put("time", Date.parse("yyyy-MM-dd H:m:s", time.toString()))
 
-        attributes.put("node_type", "calcstate")
-        ElementHelper.setProperties(node, attributes)
+    attributes.put("node_type", "calcstate")
+    ElementHelper.setProperties(node, attributes)
 
 })
 
@@ -144,20 +160,19 @@ new File(csvDir + "/comments.csv").each({ line ->
 
     attributes = [:]
 
-    if(id)
-        node = bg.addVertex("comment::" + id)
+    node = bg.addVertex("comment::" + id)
 
-        if (uuid && uuid != "null")
-            attributes.put("uuid", uuid.toString())
-        if(ctime && ctime == "null")
-            attributes.put("ctime", Date.parse("yyyy-MM-dd H:m:s", ctime.toString()))
-        if (mtime && mtime != "null")
-            attributes.put("mtime", Date.parse("yyyy-MM-dd H:m:s", mtime.toString()))
-        if(content && content == "null")
-            attributes.put("content", content.toString())
+    if (uuid && uuid != "null")
+        attributes.put("uuid", uuid.toString())
+    if(ctime && ctime == "null")
+        attributes.put("ctime", Date.parse("yyyy-MM-dd H:m:s", ctime.toString()))
+    if (mtime && mtime != "null")
+        attributes.put("mtime", Date.parse("yyyy-MM-dd H:m:s", mtime.toString()))
+    if(content && content == "null")
+        attributes.put("content", content.toString())
 
-        attributes.put("node_type", "comment")
-        ElementHelper.setProperties(node, attributes)
+    attributes.put("node_type", "comment")
+    ElementHelper.setProperties(node, attributes)
 
 })
 
@@ -168,25 +183,26 @@ new File(csvDir + "/computers.csv").each({ line ->
 
     attributes = [:]
 
-    if(id)
-        node = bg.addVertex("computer::" + id)
-        if (uuid && uuid == "null")
-            attributes.put("uuid", uuid.toString())
-        if (name && name != "null")
-            attributes.put("name", name .toString())
-        if (hostname && hostname == "null")
-            attrubutes.put("hostname", hostname.toString())
-        if (description && description != "null")
-            attributes.put("description", description.toString())
-        if (transport_type && transport_type != "null")
-            attributes.put("transport_type", transport_type.toString())
-        if (scheduler_type && scheduler_type != "null")
-            attributes.put("scheduler_type", scheduler_type.toString())
-        if (transport_params && transport_params != "null")
-            attributes.put("metadata", metadata.toString())
+    node = bg.addVertex("computer::" + id)
 
-        attributes.put("node_type", "computer")
-        ElementHelper.setProperties(node, attributes)
+    if (uuid && uuid == "null")
+        attributes.put("uuid", uuid.toString())
+    if (name && name != "null")
+        attributes.put("name", name .toString())
+    if (hostname && hostname == "null")
+        attrubutes.put("hostname", hostname.toString())
+    if (description && description != "null")
+        attributes.put("description", description.toString())
+    if (transport_type && transport_type != "null")
+        attributes.put("transport_type", transport_type.toString())
+    if (scheduler_type && scheduler_type != "null")
+        attributes.put("scheduler_type", scheduler_type.toString())
+    if (transport_params && transport_params != "null")
+        attributes.put("metadata", metadata.toString())
+
+    attributes.put("node_type", "computer")
+    ElementHelper.setProperties(node, attributes)
+
 })
 
 println 'importing groups...'
@@ -198,22 +214,21 @@ new File(csvDir + "/groups.csv").each({ line ->
 
     attributes = [:]
 
-    if (id)
-        node = bg.addVertex("group::" + id)
+    node = bg.addVertex("group::" + id)
 
-        if (uuid && uuid != "null")
-            attributes.put("uuid", uuid.toString())
-        if (name && name != "null")
-            attributes.put("name", name.toString())
-        if (type && type != "null")
-            attributes.put("type", type.toString())
-        if (time && time != "null")
-            attributes.put("time", Date.parse("yyyy-MM-dd H:m:s", time.toString()))
-        if (description && description != "null")
-            attributes.put("description", description.toString())
+    if (uuid && uuid != "null")
+        attributes.put("uuid", uuid.toString())
+    if (name && name != "null")
+        attributes.put("name", name.toString())
+    if (type && type != "null")
+        attributes.put("type", type.toString())
+    if (time && time != "null")
+        attributes.put("time", Date.parse("yyyy-MM-dd H:m:s", time.toString()))
+    if (description && description != "null")
+        attributes.put("description", description.toString())
 
-        attributes.put("node_type", "group")
-        ElementHelper.setProperties(node, attributes)
+    attributes.put("node_type", "group")
+    ElementHelper.setProperties(node, attributes)
 })
 
 println 'importing users...'
@@ -224,32 +239,31 @@ new File(csvDir + "/users.csv").each({ line ->
 
     attributes = [:]
 
-    if (id)
-        node = bg.addVertex("user::" + id)
+    node = bg.addVertex("user::" + id)
 
-        if (password && password != "null")
-            attributes.put("password", password.toString())
-        if (last_login && last_login != "null")
-            attributes.put("last_login", Date.parse("yyyy-MM-dd H:m:s", last_login.toString()))
-        if (is_superuser && is_superuser != "null")
-            attributes.put("is_superuser", is_superuser.toBoolean())
-        if (email && email != "null")
-            attributes.put("email", email.toString())
-        if (first_name && first_name != "null")
-            attributes.put("first_name", first_name.toString())
-        if (last_name && last_name != "null")
-            attributes.put("last_name", last_name.toString())
-        if (institution && institution != "null")
-            attributes.put("institution", institution.toString())
-        if (is_staff && is_staff != "null")
-            attributes.put("is_staff", is_staff.toBoolean())
-        if (is_active && is_active != "null")
-            attributes.put("is_active", is_active.toBoolean())
-        if (date_joined && date_joined != "null")
-            attributes.put("date_joined", Date.parse("yyyy-MM-dd H:m:s", date_joined.toString()))
+    if (password && password != "null")
+        attributes.put("password", password.toString())
+    if (last_login && last_login != "null")
+        attributes.put("last_login", Date.parse("yyyy-MM-dd H:m:s", last_login.toString()))
+    if (is_superuser && is_superuser != "null")
+        attributes.put("is_superuser", is_superuser.toBoolean())
+    if (email && email != "null")
+        attributes.put("email", email.toString())
+    if (first_name && first_name != "null")
+        attributes.put("first_name", first_name.toString())
+    if (last_name && last_name != "null")
+        attributes.put("last_name", last_name.toString())
+    if (institution && institution != "null")
+        attributes.put("institution", institution.toString())
+    if (is_staff && is_staff != "null")
+        attributes.put("is_staff", is_staff.toBoolean())
+    if (is_active && is_active != "null")
+        attributes.put("is_active", is_active.toBoolean())
+    if (date_joined && date_joined != "null")
+        attributes.put("date_joined", Date.parse("yyyy-MM-dd H:m:s", date_joined.toString()))
 
-        attributes.put("node_type", "user")
-        ElementHelper.setProperties(node, attributes)
+    attributes.put("node_type", "user")
+    ElementHelper.setProperties(node, attributes)
 })
 
 
@@ -277,9 +291,10 @@ new File(csvDir + "/nodes.csv").each({ line ->
     node = bg.getVertex("node::" + node_id)
 
     // Link computers to nodes
-    if (computer_id && computer_id != "null")
+    if (computer_id && computer_id != "null") {
         computer = bg.getVertex("computer::" + computer_id)
         bg.addEdge(null, computer, node, 'computes')
+    }
 
     // Link users to nodes
     user = bg.getVertex("user::" + user_id)
@@ -315,10 +330,25 @@ new File(csvDir + "/comments.csv").each({ line ->
 
 })
 
-//TODO link nodes to group
-//new File(csvDir + "/nodegroups.csv").each({ line ->
-//    (id, uuid, node_id, ctime, mtime, user_id, content) = line.split(";")
-//})
+println 'linking users to groups'
+
+new File(csvDir + "/groups.csv").each({ line ->
+    (id, uuid, name, type, time, description, user_id) = line.split(";")
+
+    group = bg.getVertex("group::" + id)
+    user = bg.getVertex("node::" + user_id)
+    bg.addEdge(null, user, group, 'inGroup')
+})
+
+println 'linking nodes to groups'
+
+new File(csvDir + "/nodegroups.csv").each({ line ->
+    (id, group_id, node_id) = line.split(";")
+
+    group = bg.getVertex("group::" + group_id)
+    node = bg.getVertex("node::" + node_id)
+    bg.addEdge(null, node, group, 'inGroup')
+})
 
 bg.commit()
 
