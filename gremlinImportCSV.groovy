@@ -1,5 +1,5 @@
 // Adapt to the directory where your csv files lie
-csvDir = ""
+csvDir = "/Users/drissielkamili/Desktop/Cours/Big_Data/Project/aiida_titan_git/Titan/postgres_export"
 
 println 'loading graph from hbase...'
 
@@ -41,29 +41,50 @@ new File(csvDir + "/nodes.csv").each({ line ->
 })
 
 println 'importing attributes...'
-
+tmp_attr = [:]
+tmp_id = -1
 // Parse db_dbattribute entries stored in attribute.csv, creates an attribute vertex identified by id
 // and add it to TitanGraph. Switch case ensure the correct type for the value
 // TODO: Take into account datatype of type 'list' or 'dict' take into account tval
 new File(csvDir + "/attributes.csv").each({ line ->
+    println line
     (id, key, datatype, tval, fval, ival, bval, dval, node_id) = line.split(";")
 
-    node = bg.getVertex("node::" + node_id)
-    attributes = ElementHelper.getProperties(node)
+    if (tmp_id == -1 )
+        tmp_id = id.toInteger()
 
-    if (id)
+    if (tmp_id == id.toInteger())
         if (datatype == "float")
-            attributes.put(key.toString(), fval.toFloat())
+            tmp_attr.put(key.toString(), fval.toFloat())
         else if (datatype == "int")
-            attributes.put(key.toString(), ival.toInteger())
+            tmp_attr.put(key.toString(), ival.toInteger())
         else if (datatype == "bool")
-            attributes.put(key.toString(), bval.toBoolean())
+            tmp_attr.put(key.toString(), bval.toBoolean())
         else if (datatype == "date")
-            attributes.put(key.toString(), Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
+            tmp_attr.put(key.toString(), Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
         else if (datatype == "txt")
-            attributes.put(key.toString(), tval.toString())
+            tmp_attr.put(key.toString(), tval.toString())
 
-    ElementHelper.setProperties(node, attributes)
+
+    if (tmp_id != id.toInteger()) {
+        node = bg.getVertex("node::" + tmp_id)
+        attr = ElementHelper.getProperties(node)
+        ElementHelper.setProperties(node, attr + tmp_attr)
+        tmp_id = id.toInteger()
+        tmp_attr = [:]
+
+        if (datatype == "float")
+            tmp_attr.put(key.toString(), fval.toFloat())
+        else if (datatype == "int")
+            tmp_attr.put(key.toString(), ival.toInteger())
+        else if (datatype == "bool")
+            tmp_attr.put(key.toString(), bval.toBoolean())
+        else if (datatype == "date")
+            tmp_attr.put(key.toString(), Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
+        else if (datatype == "txt")
+            tmp_attr.put(key.toString(), tval.toString())
+
+    }
 
 })
 
