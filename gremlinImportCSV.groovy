@@ -1,9 +1,45 @@
 // Adapt to the directory where your csv files lie
-csvDir = "/home/souleimane/Cours/Big_Data/aiida_project/titan_git/Titan/postgres_export"
+csvDir = "postgres_export"
+confDir = 'conf/titan-hbase-es.properties'
+
+println('cleaning old database')
+//g = TitanFactory.open('/Users/roger/EPFL/BigData/titan-0.5.4-hadoop2/conf/titan-berkeleydb-es.properties')
+g = TitanFactory.open(confDir)
+
+g.shutdown()
+TitanCleanup.clear(g)
 
 println 'loading graph from hbase...'
 
-g = TitanFactory.open("conf/titan-hbase.properties")
+g = TitanFactory.open(confDir)
+
+
+println('creating indices')
+
+mgmt = g.getManagementSystem()
+element = mgmt.makePropertyKey('element').dataType(String.class).make()
+mgmt.buildIndex('byElement',Vertex.class).addKey(element).buildCompositeIndex()
+mgmt.commit()
+
+mgmt = g.getManagementSystem()
+energy = mgmt.makePropertyKey('energy').dataType(Float.class).make()
+mgmt.buildIndex('mixedEnergy',Vertex.class).addKey(energy).buildMixedIndex("search")
+mgmt.commit()
+
+mgmt = g.getManagementSystem()
+energy = mgmt.makePropertyKey('ELECTRONS.mixing_beta').dataType(Float.class).make()
+mgmt.buildIndex('mixedELECTRONS.mixing_beta',Vertex.class).addKey(energy).buildMixedIndex("search")
+mgmt.commit()
+
+mgmt = g.getManagementSystem()
+energy = mgmt.makePropertyKey('CONTROL.max_seconds').dataType(Float.class).make()
+mgmt.buildIndex('mixedCONTROL.max_seconds',Vertex.class).addKey(energy).buildMixedIndex("search")
+mgmt.commit()
+
+
+
+println 'loading graph from hbase...'
+
 bg = new BatchGraph(g, VertexIDType.STRING, 1000)
 
 /*-------------------------------------- TITANS VERTICES CREATION FROM CSV FILES -------------------------------------*/
