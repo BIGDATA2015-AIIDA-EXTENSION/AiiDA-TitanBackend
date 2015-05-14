@@ -43,6 +43,18 @@ println 'loading graph from hbase...'
 bg = new BatchGraph(g, VertexIDType.STRING, 1000)
 
 /*-------------------------------------- TITANS VERTICES CREATION FROM CSV FILES -------------------------------------*/
+
+/*
+println 'Building indexes before import'
+
+mgmt = g.getManagementSystem()
+element = mgmt.makePropertyKey('element').dataType(String.class).make()
+mgmt.buildIndex('byElement',Vertex.class).addKey(element).buildCompositeIndex()
+energy = mgmt.makePropertyKey('energy').dataType(Float.class).make()
+mgmt.buildIndex('byEnergy',Vertex.class).addKey(energy).buildMixedIndex("elasticsearch")
+mgmt.commit()
+*/
+
 println 'importing nodes...'
 
 // Parse db_dbnode entries stored in nodes.csv, creates a node vertex identified by id and add it to TitanGraph
