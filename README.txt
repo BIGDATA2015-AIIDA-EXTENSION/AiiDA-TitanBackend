@@ -1,20 +1,15 @@
-The following files need to be present in your CSV directory in order to run the groovy script without errors:
-	
-	- attributes.csv
-	- calcstates.csv
-	- comments.csv
-	- computers.csv
-	- extras.csv
-	- groups.csv
-	- links.csv
-	- nodegroups.csv
-	- nodes.csv
-	- users.csv
+The following two scripts are meant to export an aiida postgresql database to a Titan graph (which use hbase as a backend).
 
-If one (or several) of those files does not have any entry ensure that the file is empty. In that case we recommend
-to issue the following command 'touch comments.csv' (e.g if there is no comments yet).
+The postgresExportCSV.sh script allows you to export the main tables of an aiida postgresql database to CSV files.
+The gremlinImportCSV.groovy script allows you to import the created CSV files to Titan db.
 
-To run the script first modify the first line of gremlinImportCSV.groovy so that csvDir is set to the directory where
-your CSV files lie.
+HOW TO:
 
-Finally run the script from your titan directory and issue the following command './bin/gremlin.sh -e path/to/gremlinImportCSV.groovy'
+To use the postgresExportCSV.sh script you first need to have a working installation of aiida and a postgresql aiida database
+called aiidadb. To do so you can follow the aiida installation tutorial at http://aiida-core.readthedocs.org/en/stable/database/index.html
+
+Once you ensured that the above requirements are fulfilled, run './postgresExportCSV.sh dir' where dir is the absolute path
+to the directory where you want the CSV files to be stored. Then go to your titan installation directory and run './bin/gremlin.sh -e dir'
+where dir is the absolute path to the directory where the generated CSV files lie.
+
+
