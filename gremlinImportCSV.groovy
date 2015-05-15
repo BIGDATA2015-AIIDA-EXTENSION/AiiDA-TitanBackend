@@ -1,5 +1,5 @@
 // Adapt to the directory where your csv files lie
-csvDir = "postgres_export"
+csvDir = "aiida_export"
 confDir = 'conf/titan-hbase-es.properties'
 
 println('cleaning old database')
@@ -36,7 +36,17 @@ energy = mgmt.makePropertyKey('CONTROL.max_seconds').dataType(Float.class).make(
 mgmt.buildIndex('mixedCONTROL.max_seconds',Vertex.class).addKey(energy).buildMixedIndex("search")
 mgmt.commit()
 
+mgmt = g.getManagementSystem()
+nodeType = mgmt.makePropertyKey('node_type').dataType(String.class).make()
+mgmt.buildIndex('mixedNode_type',Vertex.class).addKey(nodeType).buildMixedIndex("search")
+mgmt.commit()
 
+
+
+mgmt = g.getManagementSystem()
+numberOfAtmos = mgmt.makePropertyKey('number_of_atoms').dataType(Integer.class).make()
+mgmt.buildIndex('mixedNumber_of_atoms',Vertex.class).addKey(numberOfAtmos).buildMixedIndex("search")
+mgmt.commit()
 
 println 'loading graph from hbase...'
 
