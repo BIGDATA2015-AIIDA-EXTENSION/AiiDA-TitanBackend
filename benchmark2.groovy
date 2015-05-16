@@ -11,7 +11,7 @@ file << "starting Q1: Get all nodes with energy <= 0.0f \n"
 startQ1 = new Date()
 q1 = g.V.has('energy', T.lte, 0.0f).count()
 endQ1 = new Date()
-file << "duration Q1: ${endQ1.time - startQ1.time} size: ${q1}"
+file << "duration Q1: ${endQ1.time - startQ1.time}ms size: ${q1}"
 
 
 file << "\n------------------------------------------------\n"
@@ -19,7 +19,7 @@ file << "starting Q2: Get all nodes with energy > 0.0f \n"
 startQ2 = new Date()
 q2 = g.V.has('energy', T.gt, 0.0f).count()
 endQ2 = new Date()
-file << "duration Q2: ${endQ2.time - startQ2.time} size: ${q2}\n"
+file << "duration Q2: ${endQ2.time - startQ2.time}ms size: ${q2}\n"
 
 file << "\n------------------------------------------------\n"
 file << "starting Q3: Get all nodes with\n" +
@@ -29,16 +29,18 @@ file << "starting Q3: Get all nodes with\n" +
 startQ3 = new Date()
 q3 = g.V.has('number_of_atoms', T.gt, 3).has('energy', T.gt, 0.0f).as('origin').in.in.as('c2').in.as('c3').select.count()
 endQ3 = new Date()
-file << "duration Q3: ${endQ3.time - startQ3.time} size: ${q3}\n"
+file << "duration Q3: ${endQ3.time - startQ3.time}ms size: ${q3}\n"
+file << "duration Q3: ${(endQ3.time - startQ3.time)/1000/60} m size: ${q3}\n"
+
 
 
 endTime = new Date()
 file << "\n------------------------------------------------\n"
 file << "end time ${endTime.time}"
 duration = endTime.time - startTime.time
-file << "duration total ${duration}\n"
-file << "duration in seconds ${duration/1000}\n"
-file << "duration in minutes ${duration/60}\n"
+file << "duration total ${duration}ms\n"
+file << "duration in seconds ${duration/1000} s\n"
+file << "duration in minutes ${duration/1000/60} m\n"
 
 
 g.shutdown()
