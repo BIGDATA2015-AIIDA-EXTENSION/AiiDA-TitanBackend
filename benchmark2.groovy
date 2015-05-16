@@ -30,8 +30,11 @@ file << "duration Q3: ${endQ3.time - startQ3.time} size: ${q3}"
 
 endTime = new Date()
 
-println "end time " + endTime.time
-println "duration total " + (endTime.time - startTime.time)
+file << "end time ${endTime.time}"
+duration = endTime.time - startTime.time
+file << "duration total ${duration}"
+file << "duration in seconds ${duration/1000}"
+file << "duration in minutes ${duration/60}"
 
 
 g.shutdown()
