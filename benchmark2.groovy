@@ -8,13 +8,13 @@ startTime = new Date()
 file << "start time $startTime.time\n"
 file << "starting Q1: Get all nodes with energy <= 0.0f \n"
 startQ1 = new Date()
-q1 = g.V.has('node_type', 'node').out.has('energy', T.lte, 0.0f).count()
+q1 = g.V.has('energy', T.lte, 0.0f).count()
 endQ1 = new Date()
 file << "duration Q1: ${endQ1.time - startQ1.time} size: ${q1}"
 
 file << "starting Q2: Get all nodes with energy > 0.0f \n"
 startQ2 = new Date()
-q2 = g.V.has('node_type', 'node').out.has('energy', T.gt, 0.0f).count()
+q2 = g.V.has('energy', T.gt, 0.0f).count()
 endQ2 = new Date()
 file << "duration Q2: ${endQ2.time - startQ2.time} size: ${q2}"
 
