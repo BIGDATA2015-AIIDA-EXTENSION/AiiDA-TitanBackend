@@ -87,6 +87,8 @@ new File(csvDir + "/nodes.csv").each({ line ->
 
 })
 
+bg.commit()
+
 println 'importing attributes...'
 def tmp_attr = [:]
 def tmp_id = -1
@@ -122,6 +124,9 @@ new File(csvDir + "/attributes.csv").each({ line ->
 
 
 })
+
+bg.commit()
+
 
 //When the last line has been read set new properties for the last node
 if (tmp_id.toInteger() != -1) {
@@ -311,10 +316,13 @@ new File(csvDir + "/users.csv").each({ line ->
     ElementHelper.setProperties(node, attributes)
 })
 
+bg.commit()
 
 /*--------------------------------------- TITANS EDGES CREATION FROM CSV FILES ---------------------------------------*/
 
 println 'linking nodes to nodes...'
+
+counter = 0
 
 // Create edges between each node vertex given links.csv extracted from db_dblinks
 // Edge labels represent the relationship between the two linked nodes
@@ -325,6 +333,11 @@ new File(csvDir + "/links.csv").each({ line ->
     target = bg.getVertex("node::" + output_id)
 
     bg.addEdge(null, source, target, label)
+    counter++
+    if (counter > 10000) {
+        counter = 0
+        bg.commit()
+    }
 })
 
 println 'linking users and computers to nodes...'
