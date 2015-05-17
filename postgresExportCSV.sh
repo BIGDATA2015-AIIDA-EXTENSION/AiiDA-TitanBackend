@@ -97,7 +97,7 @@ echo "Exporting labels ..."
 sudo awk -F ";" '!seen[$4]++ {print $4}' $1/links.csv >> $1/labels.csv
 
 
-echo 'ALL TABLES HAVE BEEN IMPORTED SUCCESSFULLY'
+echo 'ALL TABLES HAVE BEEN EXPORTED SUCCESSFULLY'
 
 
 
