@@ -1,5 +1,5 @@
 // Adapt to the directory where your csv files lie
-csvDir = "aiida_export"
+csvDir = "/home/souleimane/Cours/export"
 confDir = 'conf/titan-hbase-es.properties'
 
 println('cleaning old database')
@@ -9,47 +9,128 @@ g = TitanFactory.open(confDir)
 g.shutdown()
 TitanCleanup.clear(g)
 
-println 'loading graph from hbase...'
+// Creating schema with batch-loading = false
 
-g = TitanFactory.open(confDir)
+conf = new BaseConfiguration()
+conf.setProperty('storage.backend', 'hbase')
+conf.setProperty('storage.hostname', '127.0.0.1')
+conf.setProperty('cache.db-cache', 'true')
+conf.setProperty('cache.db-cache-clean-wait', '20')
+conf.setProperty('cache.db-cache-time', '180000')
+conf.setProperty('cache.db-cache-size', '0.5')
+conf.setProperty('index.search.backend', 'elasticsearch')
+conf.setProperty('index.search.hostname', '127.0.0.1')
+conf.setProperty('index.search.elasticsearch.client-only', 'true')
+conf.setProperty('storage.batch-loading', 'false')
 
+g = TitanFactory.open(conf)
 
-println('creating indices')
+println ""
+println "BUILDING SCHEMA"
 
+println "defining vertex properties..."
+
+// Create node properties
 mgmt = g.getManagementSystem()
-element = mgmt.makePropertyKey('element').dataType(String.class).make()
+uuid = mgmt.makePropertyKey('uuid').dataType(String.class).make()
+type = mgmt.makePropertyKey('type').dataType(String.class).make()
+node_label = mgmt.makePropertyKey('node_label').dataType(String.class).make()
+description = mgmt.makePropertyKey('description').dataType(String.class).make()
+ctime = mgmt.makePropertyKey('ctime').dataType(Date.class).make()
+mtime = mgmt.makePropertyKey('mtime').dataType(Date.class).make()
+node_version = mgmt.makePropertyKey('node_version').dataType(Integer.class).make()
+is_public = mgmt.makePropertyKey('public').dataType(Boolean.class).make()
+node_type = mgmt.makePropertyKey('node_type').dataType(String.class).make()
+
+// Create calcstate properties
+calc_state = mgmt.makePropertyKey('calc_state').dataType(Integer.class).make()
+time = mgmt.makePropertyKey('time').dataType(Date.class).make()
+
+// Create comment properties
+content = mgmt.makePropertyKey('content').dataType(String.class).make()
+
+// Create computer properties
+name = mgmt.makePropertyKey('name').dataType(String.class).make()
+hostname = mgmt.makePropertyKey('hostname').dataType(String.class).make()
+transport_type = mgmt.makePropertyKey('transport_type').dataType(String.class).make()
+scheduler_type = mgmt.makePropertyKey('scheduler_type').dataType(String.class).make()
+metadata = mgmt.makePropertyKey('metadata').dataType(String.class).make()
+
+// Create user properties
+password = mgmt.makePropertyKey('password').dataType(String.class).make()
+last_login = mgmt.makePropertyKey('last_login').dataType(Date.class).make()
+is_superuser = mgmt.makePropertyKey('is_superuser').dataType(Boolean.class).make()
+email = mgmt.makePropertyKey('email').dataType(String.class).make()
+first_name = mgmt.makePropertyKey('first_name').dataType(String.class).make()
+last_name = mgmt.makePropertyKey('last_name').dataType(String.class).make()
+institution = mgmt.makePropertyKey('institution').dataType(String.class).make()
+is_staff = mgmt.makePropertyKey('is_staff').dataType(Boolean.class).make()
+is_active = mgmt.makePropertyKey('is_active').dataType(Boolean.class).make()
+date_joined = mgmt.makePropertyKey('date_joined').dataType(Date.class).make()
+
+// Parse each property entry stored in properties.csv and creates it with the corresponding type
+new File(csvDir + "/properties.csv").each({ line ->
+    (key, type) = line.split(";")
+    if (type == "float")
+        mgmt.makePropertyKey(key).dataType(Float.class).make()
+    else if (type == "int")
+        mgmt.makePropertyKey(key).dataType(Integer.class).make()
+    else if (type == "bool")
+        mgmt.makePropertyKey(key).dataType(Boolean.class).make()
+    else if (type == "date")
+        mgmt.makePropertyKey(key).dataType(Date.class).make()
+    else if (type == "txt")
+        mgmt.makePropertyKey(key).dataType(String.class).make()
+
+})
+
+println "defining edge labels..."
+
+mgmt.makeEdgeLabel('creates').make()
+mgmt.makeEdgeLabel('computes').make()
+mgmt.makeEdgeLabel('withCalcState').make()
+mgmt.makeEdgeLabel('withComment').make()
+mgmt.makeEdgeLabel('inGroup').make()
+
+// Create each edge label from labels.csv
+new File(csvDir + "/labels.csv").each({ line ->
+    mgmt.makeEdgeLabel(line).make()
+})
+
+
+println('creating indices...')
+
+element = mgmt.getPropertyKey('element')
 mgmt.buildIndex('byElement',Vertex.class).addKey(element).buildCompositeIndex()
-mgmt.commit()
 
-mgmt = g.getManagementSystem()
-energy = mgmt.makePropertyKey('energy').dataType(Float.class).make()
+energy = mgmt.getPropertyKey('energy')
 mgmt.buildIndex('mixedEnergy',Vertex.class).addKey(energy).buildMixedIndex("search")
-mgmt.commit()
 
-mgmt = g.getManagementSystem()
-energy = mgmt.makePropertyKey('ELECTRONS.mixing_beta').dataType(Float.class).make()
+energy = mgmt.getPropertyKey('ELECTRONS.mixing_beta')
 mgmt.buildIndex('mixedELECTRONS.mixing_beta',Vertex.class).addKey(energy).buildMixedIndex("search")
-mgmt.commit()
 
-mgmt = g.getManagementSystem()
-energy = mgmt.makePropertyKey('CONTROL.max_seconds').dataType(Float.class).make()
+energy = mgmt.getPropertyKey('CONTROL.max_seconds')
 mgmt.buildIndex('mixedCONTROL.max_seconds',Vertex.class).addKey(energy).buildMixedIndex("search")
-mgmt.commit()
 
-mgmt = g.getManagementSystem()
-nodeType = mgmt.makePropertyKey('node_type').dataType(String.class).make()
+nodeType = mgmt.getPropertyKey('node_type')
 mgmt.buildIndex('mixedNode_type',Vertex.class).addKey(nodeType).buildMixedIndex("search")
-mgmt.commit()
 
-
-
-mgmt = g.getManagementSystem()
-numberOfAtmos = mgmt.makePropertyKey('number_of_atoms').dataType(Integer.class).make()
+numberOfAtmos = mgmt.getPropertyKey('number_of_atoms')
 mgmt.buildIndex('mixedNumber_of_atoms',Vertex.class).addKey(numberOfAtmos).buildMixedIndex("search")
+
+
+println "Committing the schema..."
+
 mgmt.commit()
+
+println ""
+println "IMPORTING DATA"
+
+conf.setProperty('storage.batch-loading', 'true')
 
 println 'loading graph from hbase...'
 
+g = TitanFactory.open(conf)
 bg = new BatchGraph(g, VertexIDType.STRING, 1000)
 
 /*-------------------------------------- TITANS VERTICES CREATION FROM CSV FILES -------------------------------------*/
@@ -193,7 +274,7 @@ new File(csvDir + "/calcstates.csv").each({ line ->
     node = bg.addVertex("calcstate::" + id)
 
     if (state && state != "null")
-        attributes.put("state", id.toInteger())
+        attributes.put("calc_state", id.toInteger())
     if (time && time != "null")
         attributes.put("time", Date.parse("yyyy-MM-dd H:m:s", time.toString()))
 
@@ -409,7 +490,11 @@ new File(csvDir + "/nodegroups.csv").each({ line ->
 })
 
 bg.commit()
+g.commit()
 
+println ""
 println 'GRAPH SUCCESSFULLY CREATED'
 
+bg.shutdown()
 g.shutdown()
+

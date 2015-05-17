@@ -90,6 +90,13 @@ sudo chown $USER: $1/nodegroups.csv
 sudo chown $USER: $1/nodes.csv
 sudo chown $USER: $1/users.csv
 
+echo "Exporting properties ..."
+sudo awk -F ";" '!seen[$2]++ {print $2 ";" $3}' $1/attributes.csv >> $1/properties.csv
+
+echo "Exporting labels ..."
+sudo awk -F ";" '!seen[$4]++ {print $4}' $1/links.csv >> $1/labels.csv
+
+
 echo 'ALL TABLES HAVE BEEN IMPORTED SUCCESSFULLY'
 
 
