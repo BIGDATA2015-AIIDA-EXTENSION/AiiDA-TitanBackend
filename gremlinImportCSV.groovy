@@ -96,17 +96,20 @@ new File(csvDir + "/properties.csv").each({ line ->
 })
 
 println "defining edge labels..."
-
+labels = ['A', 'B', 'C', 'D', 'E', 'F']
 mgmt.makeEdgeLabel('creates').make()
 mgmt.makeEdgeLabel('computes').make()
 mgmt.makeEdgeLabel('withCalcState').make()
 mgmt.makeEdgeLabel('withComment').make()
 mgmt.makeEdgeLabel('inGroup').make()
-
+/*
 // Create each edge label from labels.csv
 new File(csvDir + "/labels.csv").each({ line ->
     mgmt.makeEdgeLabel(line).make()
-})
+})*/
+for (int i = 0; i < labels.size(); i++) {
+    mgmt.makeEdgeLabel(labels[i]).make()
+}
 
 
 println('creating indices...')
@@ -415,7 +418,7 @@ bg.commit()
 println 'linking nodes to nodes...'
 
 counter = 0
-
+idx = 0
 // Create edges between each node vertex given links.csv extracted from db_dblinks
 // Edge labels represent the relationship between the two linked nodes
 new File(csvDir + "/links.csv").each({ line ->
@@ -424,8 +427,9 @@ new File(csvDir + "/links.csv").each({ line ->
     source = bg.getVertex("node::" + input_id)
     target = bg.getVertex("node::" + output_id)
 
-    bg.addEdge(null, source, target, label)
+    bg.addEdge(null, source, target, labels[idx%labels.size()])
     counter++
+    idx++
     if (counter > 10000) {
         counter = 0
         bg.commit()
