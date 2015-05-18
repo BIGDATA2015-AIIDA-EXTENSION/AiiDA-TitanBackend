@@ -56,24 +56,3 @@ file << "===================================================\n"
 
 
 g.shutdown()
-
-/*
-
-akear [11:31 PM]11:31
-sub_qt = QueryTool(Calculation)
-sub_qt.filter_input_attr("number_of_atoms", ">", 3")
-sub_qt.filter_output_attr("energy", "<=", 0.)
-
-qt = QueryTool()
-qt.filter_relation("parents", sub_qt, min_depth=2, max_depth=5)
- */
-
-/*
-file << "starting Q3: Get all nodes with type Calculation\n" +
-        "with input number_of_atoms > 3 \n" +
-        "with output energy <= 0"
-startQ2 = new Date()
-q2 = g.V.has('number_of_atoms', T.gt, 3).as('in').out.as('origin').out.has('energy', T.gt, 0.0f).as('out').select.count()
-endQ2 = new Date()
-file << "duration Q2: ${endQ2.time - startQ2.time} size: ${q2}"
-*/

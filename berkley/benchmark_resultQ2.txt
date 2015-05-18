@@ -9,3 +9,14 @@ end time 1431973514224duration total 1309ms
 duration in seconds 1.309 s
 duration in minutes 0.0218166667 m
 ===================================================
+start time 1431976721249
+
+------------------------------------------------
+starting Q2: Get all nodes with energy > 0.0f 
+duration Q2: 1268ms size: 22548
+
+------------------------------------------------
+end time 1431976722545duration total 1296ms
+duration in seconds 1.296 s
+duration in minutes 0.0216 m
+===================================================

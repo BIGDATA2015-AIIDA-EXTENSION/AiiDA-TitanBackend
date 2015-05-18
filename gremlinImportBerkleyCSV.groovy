@@ -4,6 +4,9 @@ confDir = 'conf/titan-berkeleydb-es.properties'
 
 maxInsertsBeforeCommit = 100000
 
+dbDir = "db/graph"
+esDir = 'db/es'
+
 println('cleaning old database')
 //g = TitanFactory.open('/Users/roger/EPFL/BigData/titan-0.5.4-hadoop2/conf/titan-berkeleydb-es.properties')
 //g = TitanFactory.open(confDir)
@@ -25,9 +28,9 @@ println('cleaning old database')
 
 g = TitanFactory.build().
         set("storage.backend", "berkeleyje").
-        set("storage.directory", "db/graph").
+        set("storage.directory", dbDir).
         set('index.search.backend', 'elasticsearch').
-        set('index.search.directory', 'db/es').
+        set('index.search.directory', esDir).
         set('index.search.elasticsearch.client-only', false).
         set('index.search.elasticsearch.local-mode', true).open()
 
@@ -128,6 +131,10 @@ numberOfAtmos = mgmt.getPropertyKey('number_of_atoms')
 mgmt.buildIndex('mixedNumber_of_atoms',Vertex.class).addKey(numberOfAtmos).buildMixedIndex("search")
 
 
+time = mgmt.makePropertyKey('test').dataType(String.class).make()
+testIn = mgmt.makeEdgeLabel('testIn').make()
+mgmt.buildEdgeIndex(testIn,'mixedTest',Direction.BOTH,time);
+
 println "Committing the schema..."
 
 mgmt.commit()
@@ -140,9 +147,9 @@ println 'loading graph from hbase...'
 
 g = TitanFactory.build().
         set("storage.backend", "berkeleyje").
-        set("storage.directory", "db/graph").
+        set("storage.directory", dbDir).
         set('index.search.backend', 'elasticsearch').
-        set('index.search.directory', 'db/es').
+        set('index.search.directory', esDir).
         set('index.search.elasticsearch.client-only', false).
         set('index.search.elasticsearch.local-mode', true).open()
 
@@ -486,7 +493,8 @@ new File(csvDir + "/links.csv").each({ line ->
     source = bg.getVertex("node::" + input_id)
     target = bg.getVertex("node::" + output_id)
 
-    bg.addEdge(null, source, target, labels[idx%labels.size()])
+    edge = bg.addEdge(null, source, target, 'A')
+    edge.setProperty('test', 'A')
     counter++
     idx++
     if (counter > maxInsertsBeforeCommit) {

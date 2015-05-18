@@ -11,7 +11,7 @@ file << "starting Q4: Get the input node and all its attributes of the nodes wit
         "- number_of_atoms > 3 \n" +
         "- energy > 0\n"
 startQ4 = new Date()
-q4 = g.V.has('number_of_atoms', T.gt, 3).has('energy', T.gt, 0.0f).in.map.dedup().count()
+q4 = g.V.has('number_of_atoms', T.gt, 3).has('energy', T.gt, 0.0f).in('A').map.dedup().count()
 endQ4 = new Date()
 file << "duration Q4: ${endQ4.time - startQ4.time}ms size: ${q4}\n"
 file << "duration Q4: ${(endQ4.time - startQ4.time)/1000/60} m size: ${q4}\n"
@@ -24,7 +24,7 @@ duration = endTime.time - startTime.time
 file << "duration total ${duration}ms\n"
 file << "duration in seconds ${duration/1000} s\n"
 file << "duration in minutes ${duration/1000/60} m\n"
-
+println("duration:" + duration)
 
 file << "===================================================\n"
 

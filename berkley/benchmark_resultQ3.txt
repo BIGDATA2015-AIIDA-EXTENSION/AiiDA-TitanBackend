@@ -12,3 +12,71 @@ end time 1431973538505duration total 4228ms
 duration in seconds 4.228 s
 duration in minutes 0.0704666667 m
 ===================================================
+start time 1431975595621
+
+------------------------------------------------
+starting Q3: Get the input node of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+duration Q3: 3846ms size: 5734
+duration Q3: 0.0641 m size: 5734
+
+------------------------------------------------
+end time 1431975599497duration total 3876ms
+duration in seconds 3.876 s
+duration in minutes 0.0646 m
+===================================================
+start time 1431975693821
+
+------------------------------------------------
+starting Q3: Get the input node of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+start time 1431975771057
+
+------------------------------------------------
+starting Q3: Get the input node of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+start time 1431975817529
+
+------------------------------------------------
+starting Q3: Get the input node of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+duration Q3: 3490ms size: 0
+duration Q3: 0.0581666667 m size: 0
+
+------------------------------------------------
+end time 1431975821048duration total 3519ms
+duration in seconds 3.519 s
+duration in minutes 0.05865 m
+===================================================
+start time 1431976659540
+
+------------------------------------------------
+starting Q3: Get the input node of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+duration Q3: 4061ms size: 5733
+duration Q3: 0.0676833333 m size: 5733
+
+------------------------------------------------
+end time 1431976663634duration total 4094ms
+duration in seconds 4.094 s
+duration in minutes 0.0682333333 m
+===================================================
+start time 1431976677414
+
+------------------------------------------------
+starting Q3: Get the input node of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+duration Q3: 3669ms size: 5733
+duration Q3: 0.06115 m size: 5733
+
+------------------------------------------------
+end time 1431976681115duration total 3701ms
+duration in seconds 3.701 s
+duration in minutes 0.0616833333 m
+===================================================

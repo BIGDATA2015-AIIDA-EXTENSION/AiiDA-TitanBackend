@@ -1,12 +1,28 @@
-start time 1431973584264
+start time 1431976095940
 
 ------------------------------------------------
 starting Q4: Get the input node of the input node and all its attributes of the nodes with
 - number_of_atoms > 3 
 - energy > 0
-start time 1431973692713
+duration Q5: 3927ms size: 1006
+duration Q5: 0.06545 m size: 1006
+
+------------------------------------------------
+end time 1431976099901duration total 3961ms
+duration in seconds 3.961 s
+duration in minutes 0.0660166667 m
+===================================================
+start time 1431976367400
 
 ------------------------------------------------
 starting Q4: Get the input node of the input node and all its attributes of the nodes with
 - number_of_atoms > 3 
 - energy > 0
+duration Q5: 9097ms size: 5183
+duration Q5: 0.1516166667 m size: 5183
+
+------------------------------------------------
+end time 1431976376532duration total 9132ms
+duration in seconds 9.132 s
+duration in minutes 0.1522 m
+===================================================

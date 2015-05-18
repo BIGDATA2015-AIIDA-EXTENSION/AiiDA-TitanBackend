@@ -1,0 +1,14 @@
+start time 1431976781642
+
+------------------------------------------------
+starting Q4: Get the input  node 3 levels up and all its attributes of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+duration Q6: 5858ms size: 4833
+duration Q6: 0.0976333333 m size: 4833
+
+------------------------------------------------
+end time 1431976787530duration total 5888ms
+duration in seconds 5.888 s
+duration in minutes 0.0981333333 m
+===================================================
