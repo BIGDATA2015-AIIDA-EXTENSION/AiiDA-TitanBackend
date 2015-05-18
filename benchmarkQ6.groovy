@@ -13,8 +13,8 @@ file << "starting Q4: Get the input  node 3 levels up and all its attributes of 
 startQ4 = new Date()
 q4 = g.V.has('number_of_atoms', T.gt, 3).has('energy', T.gt, 0.0f).in.in.in.map.dedup().count()
 endQ4 = new Date()
-file << "duration Q4: ${endQ4.time - startQ4.time}ms size: ${q4}\n"
-file << "duration Q4: ${(endQ4.time - startQ4.time)/1000/60} m size: ${q4}\n"
+file << "duration Q6: ${endQ4.time - startQ4.time}ms size: ${q4}\n"
+file << "duration Q6: ${(endQ4.time - startQ4.time)/1000/60} m size: ${q4}\n"
 
 
 endTime = new Date()
