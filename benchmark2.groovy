@@ -22,12 +22,11 @@ endQ2 = new Date()
 file << "duration Q2: ${endQ2.time - startQ2.time}ms size: ${q2}\n"
 
 file << "\n------------------------------------------------\n"
-file << "starting Q3: Get all nodes with\n" +
+file << "starting Q3: Get the input node of the nodes with\n" +
         "- input number_of_atoms > 3 \n" +
-        "- output energy <= 0\n" +
-        "from these get the the input nodes two to 5 levels up\n"
+        "- output energy > 0\n"
 startQ3 = new Date()
-q3 = g.V.has('number_of_atoms', T.gt, 3).has('energy', T.gt, 0.0f).as('origin').in.in.as('c2').in.as('c3').select.count()
+q3 = g.V.has('number_of_atoms', T.gt, 3).has('energy', T.gt, 0.0f).in.dedup().count()
 endQ3 = new Date()
 file << "duration Q3: ${endQ3.time - startQ3.time}ms size: ${q3}\n"
 file << "duration Q3: ${(endQ3.time - startQ3.time)/1000/60} m size: ${q3}\n"
