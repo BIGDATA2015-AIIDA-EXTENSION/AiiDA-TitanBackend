@@ -2,6 +2,8 @@
 csvDir = "/home/souleimane/Cours/export"
 confDir = 'conf/titan-hbase-es.properties'
 
+maxInsertsBeforeCommit = 100000
+
 println('cleaning old database')
 //g = TitanFactory.open('/Users/roger/EPFL/BigData/titan-0.5.4-hadoop2/conf/titan-berkeleydb-es.properties')
 g = TitanFactory.open(confDir)
@@ -150,6 +152,8 @@ bg = new BatchGraph(g, VertexIDType.STRING, 1000)
 /*-------------------------------------- TITANS VERTICES CREATION FROM CSV FILES -------------------------------------*/
 println 'importing nodes...'
 
+counter = 0
+
 // Parse db_dbnode entries stored in nodes.csv, creates a node vertex identified by id and add it to TitanGraph
 new File(csvDir + "/nodes.csv").each({ line ->
     (id, uuid, type, node_label, description, ctime, mtime, user_id, computer_id, node_version, is_public) = line.split(";")
@@ -178,7 +182,12 @@ new File(csvDir + "/nodes.csv").each({ line ->
     attributes.put("node_type", "node")
     ElementHelper.setProperties(node, attributes)
 
-
+    counter++
+    if (counter >= maxInsertsBeforeCommit) {
+        counter = 0
+        bg.commit()
+        println "committed"
+    }
 
 })
 
@@ -216,6 +225,13 @@ new File(csvDir + "/attributes.csv").each({ line ->
         tmp_attr.put(key.toString(), Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
     else if (datatype == "txt")
         tmp_attr.put(key.toString(), tval.toString())
+
+    counter++
+    if (counter >= maxInsertsBeforeCommit) {
+        counter = 0
+        bg.commit()
+        println "committed"
+    }
 
 
 })
@@ -265,6 +281,13 @@ new File(csvDir + "/extras.csv").each({ line ->
         tmp_attr.put(key.toString(), Date.parse("yyyy-MM-dd H:m:s", dval.toString()))
     else if (datatype == "txt")
         tmp_attr.put(key.toString(), tval.toString())
+
+    counter++
+    if (counter >= maxInsertsBeforeCommit) {
+        counter = 0
+        bg.commit()
+        println "committed"
+    }
 })
 
 if (tmp_id.toInteger() != -1) {
@@ -295,6 +318,13 @@ new File(csvDir + "/calcstates.csv").each({ line ->
     attributes.put("node_type", "calcstate")
     ElementHelper.setProperties(node, attributes)
 
+    counter++
+    if (counter >= maxInsertsBeforeCommit) {
+        counter = 0
+        bg.commit()
+        println "committed"
+    }
+
 })
 
 println 'importing comments...'
@@ -318,6 +348,13 @@ new File(csvDir + "/comments.csv").each({ line ->
 
     attributes.put("node_type", "comment")
     ElementHelper.setProperties(node, attributes)
+
+    counter++
+    if (counter >= maxInsertsBeforeCommit) {
+        counter = 0
+        bg.commit()
+        println "committed"
+    }
 
 })
 
@@ -348,6 +385,13 @@ new File(csvDir + "/computers.csv").each({ line ->
     attributes.put("node_type", "computer")
     ElementHelper.setProperties(node, attributes)
 
+    counter++
+    if (counter >= maxInsertsBeforeCommit) {
+        counter = 0
+        bg.commit()
+        println "committed"
+    }
+
 })
 
 println 'importing groups...'
@@ -374,6 +418,13 @@ new File(csvDir + "/groups.csv").each({ line ->
 
     attributes.put("node_type", "group")
     ElementHelper.setProperties(node, attributes)
+
+    counter++
+    if (counter >= maxInsertsBeforeCommit) {
+        counter = 0
+        bg.commit()
+        println "committed"
+    }
 })
 
 println 'importing users...'
@@ -409,6 +460,13 @@ new File(csvDir + "/users.csv").each({ line ->
 
     attributes.put("node_type", "user")
     ElementHelper.setProperties(node, attributes)
+
+    counter++
+    if (counter >= maxInsertsBeforeCommit) {
+        counter = 0
+        bg.commit()
+        println "committed"
+    }
 })
 
 bg.commit()
@@ -417,7 +475,6 @@ bg.commit()
 
 println 'linking nodes to nodes...'
 
-counter = 0
 idx = 0
 // Create edges between each node vertex given links.csv extracted from db_dblinks
 // Edge labels represent the relationship between the two linked nodes
@@ -430,7 +487,7 @@ new File(csvDir + "/links.csv").each({ line ->
     bg.addEdge(null, source, target, labels[idx%labels.size()])
     counter++
     idx++
-    if (counter > 10000) {
+    if (counter > maxInsertsBeforeCommit) {
         counter = 0
         bg.commit()
     }
@@ -454,6 +511,13 @@ new File(csvDir + "/nodes.csv").each({ line ->
     user = bg.getVertex("user::" + user_id)
     bg.addEdge(null, user, node, 'creates')
 
+    counter++
+    if (counter >= maxInsertsBeforeCommit) {
+        counter = 0
+        bg.commit()
+        println "committed"
+    }
+
 
 })
 
@@ -468,6 +532,13 @@ new File(csvDir + "/calcstates.csv").each({ line ->
     calcState = bg.getVertex("calcstate::" + id)
 
     bg.addEdge(null, node, calcState, 'withCalcState')
+
+    counter++
+    if (counter >= maxInsertsBeforeCommit) {
+        counter = 0
+        bg.commit()
+        println "committed"
+    }
 })
 
 println 'linking nodes and users to comments...'
@@ -482,6 +553,13 @@ new File(csvDir + "/comments.csv").each({ line ->
     comment = bg.getVertex("comment::" + id)
     bg.addEdge(null, node, comment, 'withComment')
 
+    counter++
+    if (counter >= maxInsertsBeforeCommit) {
+        counter = 0
+        bg.commit()
+        println "committed"
+    }
+
 })
 
 println 'linking users to groups'
@@ -492,6 +570,13 @@ new File(csvDir + "/groups.csv").each({ line ->
     group = bg.getVertex("group::" + id)
     user = bg.getVertex("node::" + user_id)
     bg.addEdge(null, user, group, 'inGroup')
+
+    counter++
+    if (counter >= maxInsertsBeforeCommit) {
+        counter = 0
+        bg.commit()
+        println "committed"
+    }
 })
 
 println 'linking nodes to groups'
@@ -502,6 +587,13 @@ new File(csvDir + "/nodegroups.csv").each({ line ->
     group = bg.getVertex("group::" + group_id)
     node = bg.getVertex("node::" + node_id)
     bg.addEdge(null, node, group, 'inGroup')
+
+    counter++
+    if (counter >= maxInsertsBeforeCommit) {
+        counter = 0
+        bg.commit()
+        println "committed"
+    }
 })
 
 bg.commit()
