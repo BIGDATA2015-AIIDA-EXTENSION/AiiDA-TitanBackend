@@ -1,0 +1,14 @@
+start time 1431973534277
+
+------------------------------------------------
+starting Q3: Get the input node of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+duration Q3: 4194ms size: 5734
+duration Q3: 0.0699 m size: 5734
+
+------------------------------------------------
+end time 1431973538505duration total 4228ms
+duration in seconds 4.228 s
+duration in minutes 0.0704666667 m
+===================================================

@@ -1,0 +1,12 @@
+start time 1431973584264
+
+------------------------------------------------
+starting Q4: Get the input node of the input node and all its attributes of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+start time 1431973692713
+
+------------------------------------------------
+starting Q4: Get the input node of the input node and all its attributes of the nodes with
+- number_of_atoms > 3 
+- energy > 0

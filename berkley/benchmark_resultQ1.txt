@@ -1,0 +1,10 @@
+start time 1431973486119
+
+------------------------------------------------
+starting Q1: Get all nodes with energy <= 0.0f 
+duration Q1: 1567ms size: 22305
+------------------------------------------------
+end time 1431973487710duration total 1591ms
+duration in seconds 1.591 s
+duration in minutes 0.0265166667 m
+===================================================
