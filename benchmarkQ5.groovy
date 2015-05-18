@@ -11,7 +11,7 @@ file << "starting Q4: Get the input node of the input node and all its attribute
         "- number_of_atoms > 3 \n" +
         "- energy > 0\n"
 startQ4 = new Date()
-q4 = g.V.has('number_of_atoms', T.gt, 3).has('energy', T.gt, 0.0f).in.in.map.dedup().count()
+q4 = g.V.has('number_of_atoms', T.gt, 3).has('energy', T.gt, 0.0f).in('A').in('A').map.dedup().count()
 endQ4 = new Date()
 file << "duration Q5: ${endQ4.time - startQ4.time}ms size: ${q4}\n"
 file << "duration Q5: ${(endQ4.time - startQ4.time)/1000/60} m size: ${q4}\n"

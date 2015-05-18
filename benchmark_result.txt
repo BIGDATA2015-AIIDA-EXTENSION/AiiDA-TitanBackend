@@ -1,0 +1,84 @@
+start time 1431970596802
+
+------------------------------------------------
+starting Q1: Get all nodes with energy <= 0.0f 
+duration Q1: 115ms size: 0
+------------------------------------------------
+starting Q2: Get all nodes with energy > 0.0f 
+duration Q2: 1ms size: 0
+
+------------------------------------------------
+starting Q3: Get the input node of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+duration Q3: 6ms size: 0
+duration Q3: 0.0001 m size: 0
+
+------------------------------------------------
+starting Q4: Get the input node and all its attributes of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+duration Q4: 2ms size: 0
+duration Q4: 0.0000333333 m size: 0
+
+------------------------------------------------
+end time 1431970596961duration total 159ms
+duration in seconds 0.159 s
+duration in minutes 0.00265 m
+===================================================
+start time 1431970631715
+
+------------------------------------------------
+starting Q1: Get all nodes with energy <= 0.0f 
+duration Q1: 157ms size: 0
+------------------------------------------------
+starting Q2: Get all nodes with energy > 0.0f 
+duration Q2: 2ms size: 0
+
+------------------------------------------------
+starting Q3: Get the input node of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+duration Q3: 6ms size: 0
+duration Q3: 0.0001 m size: 0
+
+------------------------------------------------
+starting Q4: Get the input node and all its attributes of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+duration Q4: 2ms size: 0
+duration Q4: 0.0000333333 m size: 0
+
+------------------------------------------------
+end time 1431970631919duration total 204ms
+duration in seconds 0.204 s
+duration in minutes 0.0034 m
+===================================================
+start time 1431973240228
+
+------------------------------------------------
+starting Q1: Get all nodes with energy <= 0.0f 
+duration Q1: 1322ms size: 22305
+------------------------------------------------
+starting Q2: Get all nodes with energy > 0.0f 
+duration Q2: 308ms size: 22548
+
+------------------------------------------------
+starting Q3: Get the input node of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+duration Q3: 2415ms size: 5734
+duration Q3: 0.04025 m size: 5734
+
+------------------------------------------------
+starting Q4: Get the input node and all its attributes of the nodes with
+- number_of_atoms > 3 
+- energy > 0
+duration Q4: 3846ms size: 5734
+duration Q4: 0.0641 m size: 5734
+
+------------------------------------------------
+end time 1431973248159duration total 7931ms
+duration in seconds 7.931 s
+duration in minutes 0.1321833333 m
+===================================================
