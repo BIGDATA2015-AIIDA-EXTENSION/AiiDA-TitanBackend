@@ -116,23 +116,19 @@ for (int i = 0; i < labels.size(); i++) {
 
 println('creating indices...')
 
-element = mgmt.getPropertyKey('element')
-mgmt.buildIndex('byElement',Vertex.class).addKey(element).buildCompositeIndex()
+
 
 energy = mgmt.getPropertyKey('energy')
 mgmt.buildIndex('mixedEnergy',Vertex.class).addKey(energy).buildMixedIndex("search")
 
-energy = mgmt.getPropertyKey('ELECTRONS.mixing_beta')
-mgmt.buildIndex('mixedELECTRONS.mixing_beta',Vertex.class).addKey(energy).buildMixedIndex("search")
-
-energy = mgmt.getPropertyKey('CONTROL.max_seconds')
-mgmt.buildIndex('mixedCONTROL.max_seconds',Vertex.class).addKey(energy).buildMixedIndex("search")
-
-nodeType = mgmt.getPropertyKey('node_type')
-mgmt.buildIndex('mixedNode_type',Vertex.class).addKey(nodeType).buildMixedIndex("search")
 
 numberOfAtmos = mgmt.getPropertyKey('number_of_atoms')
 mgmt.buildIndex('mixedNumber_of_atoms',Vertex.class).addKey(numberOfAtmos).buildMixedIndex("search")
+
+
+time = mgmt.makePropertyKey('test').dataType(String.class).make()
+testIn = mgmt.makeEdgeLabel('testIn').make()
+mgmt.buildEdgeIndex(testIn,'mixedTest',Direction.BOTH,time);
 
 
 println "Committing the schema..."
@@ -484,7 +480,8 @@ new File(csvDir + "/links.csv").each({ line ->
     source = bg.getVertex("node::" + input_id)
     target = bg.getVertex("node::" + output_id)
 
-    bg.addEdge(null, source, target, labels[idx%labels.size()])
+    edge = bg.addEdge(null, source, target, 'A')
+    edge.setProperty('test', 'A')
     counter++
     idx++
     if (counter > maxInsertsBeforeCommit) {
